@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <assert.h>
 
-int checkAndPrint(float value, float min, float max, float message) {
+int checkAndPrint(float value, float min, float max, char message) {
     if (value < min || value > max) {
-        printf("%f", message);
+        printf("%s", message);
         return 0;
     }
     return 1;

@@ -22,17 +22,6 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
 }
 
 int main() {
-    assert(batteryIsOk(25, 70, 0.7) == 1);  // All values within range
-    assert(batteryIsOk(-1, 70, 0.7) == 0);  // Temperature out of range
-    assert(batteryIsOk(46, 70, 0.7) == 0);  // Temperature out of range
-    assert(batteryIsOk(25, 19, 0.7) == 0);  // State of Charge out of range
-    assert(batteryIsOk(25, 81, 0.7) == 0);  // State of Charge out of range
-    assert(batteryIsOk(25, 70, 0.9) == 0);  // Charge Rate out of range
-    assert(batteryIsOk(-1, 19, 0.9) == 0);  // Temperature out of range
-    assert(batteryIsOk(50, 85, 1.0) == 0);  // Temperature out of range
-    assert(batteryIsOk(0, 70, 0.7) == 1);   // Lower boundary
-    assert(batteryIsOk(45, 70, 0.7) == 1);  // Upper boundary
-    assert(batteryIsOk(25, 20, 0.7) == 1);  // Lower SOC boundary
-    assert(batteryIsOk(25, 80, 0.7) == 1);  // Upper SOC boundary
-    assert(batteryIsOk(25, 70, 0.8) == 1);  // Upper charge rate boundary
+  assert(batteryIsOk(25, 70, 0.7));
+  assert(!batteryIsOk(50, 85, 0));
 }

@@ -3,7 +3,7 @@
 
 int checkAndPrint(float value, float min, float max, float message) {
     if (value < min || value > max) {
-        printf("%s", message);
+        printf("%f", message);
         return 0;
     }
     return 1;

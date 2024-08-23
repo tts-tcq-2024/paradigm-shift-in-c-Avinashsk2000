@@ -35,8 +35,4 @@ int main() {
     assert(batteryIsOk(25, 20, 0.7) == 1);  // Lower SOC boundary
     assert(batteryIsOk(25, 80, 0.7) == 1);  // Upper SOC boundary
     assert(batteryIsOk(25, 70, 0.8) == 1);  // Upper charge rate boundary
-
-    printf("All tests passed.\n");
-
-    return 0;
 }

@@ -1,20 +1,24 @@
 #include <stdio.h>
 #include <assert.h>
 
-int checkAndPrint(float value, float min, float max, const char* message) { //const char is for the charachter array
+#define ERROR_TEMP "Temperature out of range!\n"
+#define ERROR_SOC "State of Charge out of range!\n"
+#define ERROR_CHARGE "Charge Rate out of range!\n"
+
+int checkAndPrint(float value, float min, float max, const char* errorMessage) {
     if (value < min || value > max) {
-        printf("%s", message);
+        printf("%s", errorMessage);
         return 0;
     }
     return 1;
 }
 
 int batteryIsOk(float temperature, float soc, float chargeRate) {
-    int isTemperatureOk = checkAndPrint(temperature, 0, 45, "Temperature out of range!\n");
-    int isSocOk = checkAndPrint(soc, 20, 80, "State of Charge out of range!\n");
-    int isChargeRateOk = checkAndPrint(chargeRate, 0, 0.8, "Charge Rate out of range!\n");
+    int isTemperatureOk = checkAndPrint(temperature, 0, 45, ERROR_TEMP);
+    int isSocOk = checkAndPrint(soc, 20, 80, ERROR_SOC);
+    int isChargeRateOk = checkAndPrint(chargeRate, 0, 0.8, ERROR_CHARGE);
 
-    return isTemperatureOk && isSocOk && isChargeRateOk;  // All three should be 1, then only the battery is okay, else it is not or something is out of range
+    return isTemperatureOk && isSocOk && isChargeRateOk;
 }
 
 int main() {

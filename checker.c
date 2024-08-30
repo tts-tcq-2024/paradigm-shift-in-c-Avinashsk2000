@@ -35,26 +35,50 @@ int BatteryIsOk(float temperature, float soc, float chargeRate) {
 }
 
 int main() {
-    assert(BatteryIsOk(25, 70, 0.7));
-    assert(!BatteryIsOk(50, 85, 0));
-    // Test case for valid
-    assert(BatteryIsOk(0, 20, 0.0));     
-    assert(BatteryIsOk(45, 80, 0.8)); 
-    // Test cases for invalid temp
-    assert(!BatteryIsOk(-1, 70, 0.7)); 
-    assert(!BatteryIsOk(46, 70, 0.7));   // Temperature above range
-    // Test cases for invalid SOC
-    assert(!BatteryIsOk(25, 19, 0.7));   // SOC below range
-    assert(!BatteryIsOk(25, 81, 0.7));   // SOC above range
-    // Test cases for invalid charge rate
-    assert(!BatteryIsOk(25, 70, 0.9));   // Charge rate above range
-    // Test cases for invalid combinations
-    assert(!BatteryIsOk(-1, 19, 0.9));   // Temperature and SOC below range
-    assert(!BatteryIsOk(46, 81, 0.9));   // Temperature and SOC above range
-    assert(!BatteryIsOk(25, 70, 1.0));   // Charge rate above range, within valid temperature and SOC
-    // Test cases for edge values
-    assert(!BatteryIsOk(0, 19, 0.7));    // Lower boundary for temperature, SOC below range
-    assert(!BatteryIsOk(45, 81, 0.8));   // Upper boundary for temperature, SOC above range
-    assert(BatteryIsOk(25, 70, 0.8));    // Valid at upper boundary of charge rate
-    assert(BatteryIsOk(25, 70, 0.0));    // Valid at lower boundary of charge rate
+    testValidCases();
+    testInvalidTemperatureCases();
+    testInvalidSocCases();
+    testInvalidChargeRateCases();
+    testInvalidCombinations();
+    testEdgeCases();
 }
+
+// Function to test valid cases
+void testValidCases() {
+    assert(batteryIsOk(25, 70, 0.7));
+    assert(batteryIsOk(0, 20, 0.0));  // Lower boundary of all values
+    assert(batteryIsOk(45, 80, 0.8)); // Upper boundary of all values
+    assert(batteryIsOk(25, 70, 0.8)); // Valid at upper boundary of charge rate
+    assert(batteryIsOk(25, 70, 0.0)); // Valid at lower boundary of charge rate
+}
+
+// Function to test invalid temperature cases
+void testInvalidTemperatureCases() {
+    assert(!batteryIsOk(-1, 70, 0.7)); // Temperature below range
+    assert(!batteryIsOk(46, 70, 0.7)); // Temperature above range
+}
+
+// Function to test invalid SOC cases
+void testInvalidSocCases() {
+    assert(!batteryIsOk(25, 19, 0.7)); // SOC below range
+    assert(!batteryIsOk(25, 81, 0.7)); // SOC above range
+}
+
+// Function to test invalid charge rate cases
+void testInvalidChargeRateCases() {
+    assert(!batteryIsOk(25, 70, 0.9)); // Charge rate above range
+}
+
+// Function to test invalid combinations
+void testInvalidCombinations() {
+    assert(!batteryIsOk(-1, 19, 0.9)); // Temperature and SOC below range
+    assert(!batteryIsOk(46, 81, 0.9)); // Temperature and SOC above range
+    assert(!batteryIsOk(25, 70, 1.0)); // Charge rate above range, within valid temperature and SOC
+}
+
+// Function to test edge cases
+void testEdgeCases() {
+    assert(!batteryIsOk(0, 19, 0.7));  // Lower boundary for temperature, SOC below range
+    assert(!batteryIsOk(45, 81, 0.8)); // Upper boundary for temperature, SOC above range
+}
+

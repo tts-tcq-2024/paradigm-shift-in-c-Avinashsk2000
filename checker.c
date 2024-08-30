@@ -1,38 +1,47 @@
 #include <stdio.h>
 #include <assert.h>
 
-/* We could have added these printf values directly inside the functions,
-but as we are in need of a pure function. 
-it's better to use macros so both the functions become independent.
-*/
 #define ERROR_TEMP "Temperature out of range!\n"  
 #define ERROR_SOC "State of Charge out of range!\n"
 #define ERROR_CHARGE "Charge Rate out of range!\n"
 
-int CheckAndPrint(float value, float min, float max, const char* errormessage) {
-    if (value < min || value > max) {
-        printf("%s", errormessage);
-        return 0;
-    }
-    return 1;
+// Function to check if the value is within the specified range
+int CheckValue(float value, float min, float max) {
+    return (value >= min && value <= max);
+}
+
+// Function to print the error message
+void PrintErrorMessage(const char* errormessage) {
+    printf("%s", errormessage);
 }
 
 int BatteryIsOk(float temperature, float soc, float chargeRate) {
-    int isTemperatureOk = CheckAndPrint(temperature, 0, 45, ERROR_TEMP);
-    int isSocOk = CheckAndPrint(soc, 20, 80, ERROR_SOC);
-    int isChargeRateOk = CheckAndPrint(chargeRate, 0, 0.8, ERROR_CHARGE);
-
-    return isTemperatureOk && isSocOk && isChargeRateOk;
+    // Array of checks and corresponding error messages
+    float values[] = {temperature, soc, chargeRate};
+    float minValues[] = {0, 20, 0};
+    float maxValues[] = {45, 80, 0.8};
+    const char* errorMessages[] = {ERROR_TEMP, ERROR_SOC, ERROR_CHARGE};
+    
+    int result = 1; // Assume all checks are okay initially
+    
+    for (int i = 0; i < 3; i++) {
+        if (!CheckValue(values[i], minValues[i], maxValues[i])) {
+            PrintErrorMessage(errorMessages[i]);
+            result = 0; // Set result to 0 if any check fails
+        }
+    }
+    
+    return result;
 }
 
 int main() {
     assert(BatteryIsOk(25, 70, 0.7));
     assert(!BatteryIsOk(50, 85, 0));
-    //Test case for valid
-    assert(BatteryIsOk(0, 20, 0.0));     // Lower boundary of all values
-    assert(BatteryIsOk(45, 80, 0.8));    // Upper boundary of all value
+    // Test case for valid
+    assert(BatteryIsOk(0, 20, 0.0));     
+    assert(BatteryIsOk(45, 80, 0.8)); 
     // Test cases for invalid temp
-    assert(!BatteryIsOk(-1, 70, 0.7));   // Temperature below range
+    assert(!BatteryIsOk(-1, 70, 0.7)); 
     assert(!BatteryIsOk(46, 70, 0.7));   // Temperature above range
     // Test cases for invalid SOC
     assert(!BatteryIsOk(25, 19, 0.7));   // SOC below range

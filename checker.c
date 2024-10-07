@@ -18,16 +18,20 @@ void checkWarning(float value, float min, float max, const char* warnLow, const 
     float lowerWarningLimit = min + tolerance * max;
     float upperWarningLimit = max - tolerance * max;
 
-    // Mathematical expressions to select the warning message
-    int isLowWarning = (value - min) * (lowerWarningLimit - value) >= 0;   // True when value is between min and lowerWarningLimit
-    int isHighWarning = (value - upperWarningLimit) * (max - value) > 0;   // True when value is between upperWarningLimit and max
+    // Arrays to hold the possible messages
+    const char* warnings[] = {"", warnLow, warnHigh};
 
-    // Use bitwise OR to print the appropriate warning
-    const char* message = warnLow * isLowWarning | warnHigh * isHighWarning;
+    // Determine which warning should be used (0 for none, 1 for low, 2 for high)
+    int lowWarningIndex = (value > min && value <= lowerWarningLimit);  // Returns 1 if low warning, 0 otherwise
+    int highWarningIndex = (value >= upperWarningLimit && value < max);  // Returns 1 if high warning, 0 otherwise
 
-    // Print the message if any warning applies
+    // Use the appropriate index to select the warning (0 for none, 1 for low, 2 for high)
+    const char* message = warnings[lowWarningIndex + 2 * highWarningIndex];
+
+    // Print the selected message (if any)
     printf("%s", message);
 }
+
 
 // Function to check range and return error message if value exceeds limits
 int checkAndWarn(float value, float min, float max, const char* errorMessage, const char* warnLow, const char* warnHigh) {

@@ -14,18 +14,22 @@
 float tolerance = 0.05;  // 5% tolerance
 
 // Function to check values and give early warnings
-int checkWarning(float value, float min, float max, const char* warnLow, const char* warnHigh) {
+void checkWarning(float value, float min, float max, const char* warnLow, const char* warnHigh) {
     float lowerWarningLimit = min + tolerance * max;
     float upperWarningLimit = max - tolerance * max;
-    
-    if (value > min && value <= lowerWarningLimit) {
-        printf("%s", warnLow);
-    } 
-    if (value >= upperWarningLimit && value < max) {
-        printf("%s", warnHigh);
-    }
 
-    return 1;
+    // Calculate conditions for warning
+    int warnLowCondition = (value > min) && (value <= lowerWarningLimit);
+    int warnHighCondition = (value >= upperWarningLimit) && (value < max);
+
+    // Map conditions to messages
+    const char* warnings[] = {warnLow, warnHigh};
+    int condition[] = {warnLowCondition, warnHighCondition};
+
+    // Print based on the calculated conditions
+    for (int i = 0; i < 2; i++) {
+        printf("%s", condition[i] ? warnings[i] : "");
+    }
 }
 
 // Function to check range and return error message if value exceeds limits

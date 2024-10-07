@@ -20,44 +20,55 @@ void printWarning(const char* message) {
     }
 }
 
-// Function to check for low warnings
-void checkLowWarning(float value, float min, float max, const char* warnLow) {
-    float lowerWarningLimit = min + (tolerance * max);
-    if (value > min && value <= lowerWarningLimit) {
-        printWarning(warnLow);
+// Function to check temperature and print warnings
+void checkTemperature(float temperature) {
+    float min = 0, max = 45;
+    if (temperature < min || temperature > max) {
+        printf("%s", ERROR_TEMP);
+    } else {
+        float lowerWarningLimit = min + (tolerance * max);
+        float upperWarningLimit = max - (tolerance * max);
+        printWarning((temperature > min && temperature <= lowerWarningLimit) ? WARNING_TEMP_LOW : "");
+        printWarning((temperature >= upperWarningLimit && temperature < max) ? WARNING_TEMP_HIGH : "");
     }
 }
 
-// Function to check for high warnings
-void checkHighWarning(float value, float min, float max, const char* warnHigh) {
-    float upperWarningLimit = max - (tolerance * max);
-    if (value >= upperWarningLimit && value < max) {
-        printWarning(warnHigh);
+// Function to check State of Charge (SoC) and print warnings
+void checkSOC(float soc) {
+    float min = 20, max = 80;
+    if (soc < min || soc > max) {
+        printf("%s", ERROR_SOC);
+    } else {
+        float lowerWarningLimit = min + (tolerance * max);
+        float upperWarningLimit = max - (tolerance * max);
+        printWarning((soc > min && soc <= lowerWarningLimit) ? WARNING_SOC_LOW : "");
+        printWarning((soc >= upperWarningLimit && soc < max) ? WARNING_SOC_HIGH : "");
     }
 }
 
-// Function to check range and print errors/warnings
-int checkAndWarn(float value, float min, float max, const char* errorMessage, const char* warnLow, const char* warnHigh) {
-    if (value < min || value > max) {
-        printf("%s", errorMessage);
-        return 0;  // Out of range
+// Function to check charge rate and print warnings
+void checkChargeRate(float chargeRate) {
+    float min = 0, max = 0.8;
+    if (chargeRate < min || chargeRate > max) {
+        printf("%s", ERROR_CHARGE);
+    } else {
+        float lowerWarningLimit = min + (tolerance * max);
+        float upperWarningLimit = max - (tolerance * max);
+        printWarning((chargeRate > min && chargeRate <= lowerWarningLimit) ? WARNING_CHARGE_LOW : "");
+        printWarning((chargeRate >= upperWarningLimit && chargeRate < max) ? WARNING_CHARGE_HIGH : "");
     }
-
-    // Check for low and high warnings separately
-    checkLowWarning(value, min, max, warnLow);
-    checkHighWarning(value, min, max, warnHigh);
-
-    return 1;  // Within range
 }
 
+// Function to check battery status
 int batteryIsOk(float temperature, float soc, float chargeRate) {
-    // Perform checks for all parameters
-    int temperatureStatus = checkAndWarn(temperature, 0, 45, ERROR_TEMP, WARNING_TEMP_LOW, WARNING_TEMP_HIGH);
-    int socStatus = checkAndWarn(soc, 20, 80, ERROR_SOC, WARNING_SOC_LOW, WARNING_SOC_HIGH);
-    int chargeRateStatus = checkAndWarn(chargeRate, 0, 0.8, ERROR_CHARGE, WARNING_CHARGE_LOW, WARNING_CHARGE_HIGH);
+    checkTemperature(temperature);
+    checkSOC(soc);
+    checkChargeRate(chargeRate);
 
-    // Return the overall status
-    return temperatureStatus && socStatus && chargeRateStatus;
+    // Return 1 only if all checks are okay
+    return (temperature >= 0 && temperature <= 45) &&
+           (soc >= 20 && soc <= 80) &&
+           (chargeRate >= 0 && chargeRate <= 0.8);
 }
 
 int main() {

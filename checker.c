@@ -48,6 +48,7 @@ int checkChargeRateWarning(float chargeRate) {
 }
 
 int batteryIsOk(float temperature, float soc, float chargeRate) {
+    // Check each parameter against its limits
     int isTemperatureOk = (temperature >= 0 && temperature <= 45);
     int isSocOk = (soc >= 20 && soc <= 80);
     int isChargeRateOk = (chargeRate >= 0 && chargeRate <= 0.8);
@@ -57,6 +58,7 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
     checkSocWarning(soc);
     checkChargeRateWarning(chargeRate);
 
+    // Return overall health of the battery
     return isTemperatureOk && isSocOk && isChargeRateOk;
 }
 
@@ -83,4 +85,6 @@ int main() {
     assert(!batteryIsOk(45, 81, 0.8));
     assert(batteryIsOk(25, 70, 0.8));    
     assert(batteryIsOk(25, 70, 0.0)); 
+
+    return 0;
 }

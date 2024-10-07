@@ -20,24 +20,34 @@ void printWarning(const char* message) {
     }
 }
 
-// Function to check range and print warnings if necessary
+// Function to check for low warnings
+void checkLowWarning(float value, float min, float max, const char* warnLow) {
+    float lowerWarningLimit = min + (tolerance * max);
+    if (value > min && value <= lowerWarningLimit) {
+        printWarning(warnLow);
+    }
+}
+
+// Function to check for high warnings
+void checkHighWarning(float value, float min, float max, const char* warnHigh) {
+    float upperWarningLimit = max - (tolerance * max);
+    if (value >= upperWarningLimit && value < max) {
+        printWarning(warnHigh);
+    }
+}
+
+// Function to check range and print errors/warnings
 int checkAndWarn(float value, float min, float max, const char* errorMessage, const char* warnLow, const char* warnHigh) {
     if (value < min || value > max) {
         printf("%s", errorMessage);
-        return 0;
+        return 0;  // Out of range
     }
 
-    // Calculate warning limits
-    float lowerWarningLimit = min + (tolerance * max);
-    float upperWarningLimit = max - (tolerance * max);
+    // Check for low and high warnings separately
+    checkLowWarning(value, min, max, warnLow);
+    checkHighWarning(value, min, max, warnHigh);
 
-    // Use array indexing to determine the warning message
-    const char* warnings[] = { "", warnLow, warnHigh };
-    int warningIndex = (value > min && value <= lowerWarningLimit) +
-                       (value >= upperWarningLimit && value < max) * 2;
-
-    printWarning(warnings[warningIndex]);
-    return 1;
+    return 1;  // Within range
 }
 
 int batteryIsOk(float temperature, float soc, float chargeRate) {

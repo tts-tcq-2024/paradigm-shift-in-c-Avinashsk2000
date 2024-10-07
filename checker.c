@@ -4,83 +4,75 @@
 #define ERROR_TEMP "Temperature out of range!\n"
 #define ERROR_SOC "State of Charge out of range!\n"
 #define ERROR_CHARGE "Charge Rate out of range!\n"
-#define WARNING_TEMP "Warning: Approaching discharge or charge-peak!\n"
-#define WARNING_SOC "Warning: Approaching discharge or charge-peak!\n"
-#define WARNING_CHARGE "Warning: Approaching charge-peak!\n"
+#define WARNING_TEMP_LOW "Warning: Approaching lower temperature limit\n"
+#define WARNING_TEMP_HIGH "Warning: Approaching upper temperature limit\n"
+#define WARNING_SOC_LOW "Warning: Approaching discharge\n"
+#define WARNING_SOC_HIGH "Warning: Approaching charge-peak\n"
+#define WARNING_CHARGE_LOW "Warning: Approaching lower charge rate limit\n"
+#define WARNING_CHARGE_HIGH "Warning: Approaching upper charge rate limit\n"
 
+float tolerance = 0.05;  // 5% tolerance
+
+// Function to print warning messages
 void printWarning(const char* message) {
-    printf("%s", message);
+    if (message[0] != '\0') {  // Only print non-empty messages
+        printf("%s", message);
+    }
 }
 
-int checkTemperatureWarning(float temperature) {
-    float lowerLimit = 0.0;
-    float upperLimit = 45.0;
-    float tolerance = 0.05 * upperLimit; // 5% tolerance
-
-    if (temperature < lowerLimit + tolerance || temperature > upperLimit - tolerance) {
-        printWarning(WARNING_TEMP);
-        return 1; // Warning triggered
+// Function to check range and print warnings if necessary
+int checkAndWarn(float value, float min, float max, const char* errorMessage, const char* warnLow, const char* warnHigh) {
+    if (value < min || value > max) {
+        printf("%s", errorMessage);
+        return 0;
     }
-    return 0; // No warning
-}
 
-int checkSocWarning(float soc) {
-    float lowerLimit = 20.0;
-    float upperLimit = 80.0;
-    float tolerance = 0.05 * upperLimit; // 5% tolerance
+    // Calculate warning limits
+    float lowerWarningLimit = min + (tolerance * max);
+    float upperWarningLimit = max - (tolerance * max);
 
-    if (soc < lowerLimit + tolerance || soc > upperLimit - tolerance) {
-        printWarning(WARNING_SOC);
-        return 1; // Warning triggered
-    }
-    return 0; // No warning
-}
+    // Use array indexing to determine the warning message
+    const char* warnings[] = { "", warnLow, warnHigh };
+    int warningIndex = (value > min && value <= lowerWarningLimit) +
+                       (value >= upperWarningLimit && value < max) * 2;
 
-int checkChargeRateWarning(float chargeRate) {
-    float upperLimit = 0.8;
-    float tolerance = 0.05 * upperLimit; // 5% tolerance
-
-    if (chargeRate > upperLimit - tolerance) {
-        printWarning(WARNING_CHARGE);
-        return 1; // Warning triggered
-    }
-    return 0; // No warning
+    printWarning(warnings[warningIndex]);
+    return 1;
 }
 
 int batteryIsOk(float temperature, float soc, float chargeRate) {
-    // Check each parameter against its limits
-    int isTemperatureOk = (temperature >= 0 && temperature <= 45);
-    int isSocOk = (soc >= 20 && soc <= 80);
-    int isChargeRateOk = (chargeRate >= 0 && chargeRate <= 0.8);
+    // Perform checks for all parameters
+    int temperatureStatus = checkAndWarn(temperature, 0, 45, ERROR_TEMP, WARNING_TEMP_LOW, WARNING_TEMP_HIGH);
+    int socStatus = checkAndWarn(soc, 20, 80, ERROR_SOC, WARNING_SOC_LOW, WARNING_SOC_HIGH);
+    int chargeRateStatus = checkAndWarn(chargeRate, 0, 0.8, ERROR_CHARGE, WARNING_CHARGE_LOW, WARNING_CHARGE_HIGH);
 
-    // Check for warnings
-    checkTemperatureWarning(temperature);
-    checkSocWarning(soc);
-    checkChargeRateWarning(chargeRate);
-
-    // Return overall health of the battery
-    return isTemperatureOk && isSocOk && isChargeRateOk;
+    // Return the overall status
+    return temperatureStatus && socStatus && chargeRateStatus;
 }
 
 int main() {
+    // Valid cases
     assert(batteryIsOk(25, 70, 0.7));
-    assert(!batteryIsOk(50, 85, 0));
-    // Test case for valid
     assert(batteryIsOk(0, 20, 0.0));     
     assert(batteryIsOk(45, 80, 0.8));    
-    // Test cases for invalid temp
+
+    // Test cases for invalid temperature
     assert(!batteryIsOk(-1, 70, 0.7));   
     assert(!batteryIsOk(46, 70, 0.7));   
+
     // Test cases for invalid SOC
     assert(!batteryIsOk(25, 19, 0.7));  
     assert(!batteryIsOk(25, 81, 0.7));  
+
     // Test cases for invalid charge rate
     assert(!batteryIsOk(25, 70, 0.9));   
+
     // Test cases for invalid combinations
     assert(!batteryIsOk(-1, 19, 0.9));   
     assert(!batteryIsOk(46, 81, 0.9));  
     assert(!batteryIsOk(25, 70, 1.0));   
-    // Test cases for edge values
+
+    // Edge cases
     assert(!batteryIsOk(0, 19, 0.7)); 
     assert(!batteryIsOk(45, 81, 0.8));
     assert(batteryIsOk(25, 70, 0.8));    

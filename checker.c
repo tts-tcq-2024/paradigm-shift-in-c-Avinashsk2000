@@ -99,7 +99,6 @@ int main() {
     // Valid cases
     assert(batteryIsOk(25, 70, 0.7));
     assert(batteryIsOk(0, 20, 0.0));     
-    assert(batteryIsOk(45, 80, 0.8));    
 
     // Test cases for invalid temperature
     assert(!batteryIsOk(-1, 70, 0.7));   

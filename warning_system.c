@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "warning_system.h"
 
-// Define tolerance
 float tolerance = 0.05;  // 5% tolerance
 
 void printWarningMessage(const char* message) {

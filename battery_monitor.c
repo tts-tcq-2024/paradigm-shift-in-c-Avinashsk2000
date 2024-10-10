@@ -38,5 +38,18 @@ int main() {
     assert(batteryIsOk(25, 70, 0.8));    
     assert(batteryIsOk(25, 70, 0.0)); 
 
-    assert(batteryIsOk(1.0, 50, 0.5));
+    // Test Temperature Warnings
+    assert(batteryIsOk(1.0, 50, 0.5));  // Should trigger lower temperature warning
+    assert(batteryIsOk(44.0, 50, 0.5));  // Should trigger upper temperature warning
+
+    // Test SoC Warnings
+    assert(batteryIsOk(25, 21.0, 0.5));  // Should trigger lower SoC warning
+    assert(batteryIsOk(25, 79.0, 0.5));  // Should trigger upper SoC warning
+
+    // Test Charge Rate Warnings
+    assert(batteryIsOk(25, 50, 0.02));  // Should trigger lower charge rate warning
+    assert(batteryIsOk(25, 50, 0.78));  // Should trigger upper charge rate warning
+
+    // Test No Warnings
+    assert(batteryIsOk(25, 50, 0.5));   // No warnings should be triggered
 }

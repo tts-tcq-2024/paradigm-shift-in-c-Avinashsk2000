@@ -10,8 +10,6 @@ int batteryIsOk(float temperature, float soc, float chargeRate) {
     return temperatureStatus && socStatus && chargeRateStatus;
 }
 
-
-
 int main() {
     // Valid cases
     assert(batteryIsOk(25, 70, 0.7));

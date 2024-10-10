@@ -49,3 +49,5 @@ int main() {
     // Test Charge Rate Warnings
     assert(batteryIsOk(25, 50, 0.02));  // Should trigger lower charge rate warning
     assert(batteryIsOk(25, 50, 0.78));  // Should trigger upper charge rate warning
+
+}

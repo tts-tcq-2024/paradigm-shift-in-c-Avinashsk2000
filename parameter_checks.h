@@ -1,6 +1,3 @@
-#ifndef PARAMETER_CHECKS_H
-#define PARAMETER_CHECKS_H
-
 #define ERROR_TEMP "Temperature out of range!\n"
 #define ERROR_SOC "State of Charge out of range!\n"
 #define ERROR_CHARGE "Charge Rate out of range!\n"
@@ -12,5 +9,3 @@
 #define WARNING_CHARGE_HIGH "Warning: Approaching upper charge rate limit\n"
 
 int checkParameter(float value, float min, float max, const char* errorMessage, const char* lowWarning, const char* highWarning);
-
-#endif

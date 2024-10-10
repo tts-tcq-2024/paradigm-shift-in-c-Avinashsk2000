@@ -1,4 +1,4 @@
-extern float tolerance;  // Declare tolerance as extern
+extern float tolerance;
 
 void printWarningMessage(const char* message);
 void checkLowThreshold(float value, float min, float max, const char* lowWarningMessage);
